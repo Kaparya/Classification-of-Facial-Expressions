@@ -1,0 +1,5 @@
+Model,Accuracy,F1 weighted,ms/sample,Size (MB)
+SCME+GF (simplified),0.3328,0.3078,0.71,3.68
+ResNet18+GRU (baseline),0.3417,0.2875,1.6,3.08
+MM-NodeFormer (simplified),0.3086,0.2786,0.88,5.67
+Ours (MelCNN+EmotiEffNet+TCN),0.3127,0.2686,3.28,13.36
