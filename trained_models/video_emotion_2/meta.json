@@ -1,7 +1,0 @@
-{
-  "N_CLASSES": 8,
-  "FEAT_DIM": 576,
-  "FEAT_DIM_EFF": 1280,
-  "N_FRAMES": 16,
-  "IMG_SIZE": 224
-}

@@ -1,0 +1,23 @@
+{
+  "SR": 16000,
+  "N_MELS": 64,
+  "MAX_LEN": 128,
+  "HOP": 512,
+  "N_MFCC": 40,
+  "mel_mean": -31.409805297851562,
+  "mel_std": 26.3829288482666,
+  "hub_dim": 768,
+  "w2v_name": "facebook/wav2vec2-base",
+  "w2v_max_audio_sec": 6,
+  "augmentation": {
+    "copies": 3,
+    "transforms": [
+      "AddGaussianSNR(5..25 dB) p=0.6",
+      "Shift(\u00b11.0 s) p=0.5",
+      "Gain(-9..+6 dB) p=0.5",
+      "TimeStretch(0.9..1.1, length-preserving) p=0.4",
+      "PitchShift(\u00b12 semitones) p=0.4"
+    ],
+    "test_augmented": false
+  }
+}
