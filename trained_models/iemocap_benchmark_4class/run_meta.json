@@ -1,0 +1,47 @@
+{
+  "git_hash": "fee2a24664e3717732eb186eaad32975b3a5d2b7",
+  "seed": 42,
+  "device": "mps",
+  "timestamp": "2026-05-20 00:42:11",
+  "n_utterances": 5531,
+  "classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry"
+  ],
+  "sessions": [
+    "Session1",
+    "Session2",
+    "Session3",
+    "Session4",
+    "Session5"
+  ],
+  "loso_val_for_test": {
+    "Session1": "Session2",
+    "Session2": "Session3",
+    "Session3": "Session4",
+    "Session4": "Session5",
+    "Session5": "Session1"
+  },
+  "train_cfg": {
+    "epochs": 40,
+    "patience": 8,
+    "batch_size": 16,
+    "lr": 0.001,
+    "lr_finetune": 0.0003,
+    "weight_decay": 0.0001,
+    "label_smoothing": 0.1,
+    "grad_clip": 1.0,
+    "accum_steps": 1,
+    "num_workers": 0,
+    "augment": false,
+    "aug_noise": 0.05
+  },
+  "versions": {
+    "python": "3.12.7",
+    "torch": "2.10.0",
+    "numpy": "2.3.0",
+    "pandas": "3.0.0"
+  }
+}

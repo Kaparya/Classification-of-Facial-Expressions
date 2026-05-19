@@ -3,17 +3,17 @@ import torch
 
 ROOT = Path(__file__).parent.parent.parent  # Diploma/
 
-AUDIO_CKPT_DIR  = ROOT / "trained_models" / "audio_neutral_2"
+AUDIO_CKPT_DIR  = ROOT / "trained_models" / "audio_neutral_3_augmentation"
 IEMOCAP_CKPT_DIR = ROOT / "trained_models" / "iemocap_benchmark"
 FACE_DETECTOR_PATH = ROOT / "raw_models" / "blaze_face_short_range.tflite"
 
-# Audio (matches audio_neutral_2/meta.json)
+# Audio (matches audio_neutral_3_augmentation/meta.json)
 SR      = 16_000
 N_MELS  = 64
 MAX_LEN = 128
 HOP     = 512
-MEL_MEAN = -33.17436218261719
-MEL_STD  = 27.39727783203125
+MEL_MEAN = -31.409805297851562
+MEL_STD  = 26.3829288482666
 
 # Video
 N_FRAMES = 16
