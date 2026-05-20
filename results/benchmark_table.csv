@@ -2,6 +2,6 @@ Model,Params,Modalities,WA,UA (UAR),Macro F1
 SCME+GF,0.97M,audio+video,0.4127 +- 0.0312,0.4626 +- 0.0294,0.3814 +- 0.0203
 MM-NodeFormer,1.49M,audio+video,0.4145 +- 0.0392,0.4475 +- 0.0173,0.3985 +- 0.0395
 ResNet18+GRU,0.81M,video,0.3192 +- 0.0480,0.3110 +- 0.0450,0.2782 +- 0.0498
-Ours (MelCNN->BiLSTM),3.58M,audio+video,0.2856 +- 0.0401,0.2810 +- 0.0206,0.2341 +- 0.0192
+Ours (MelCNN->BiLSTM),3.58M,audio+video,0.2909 +- 0.0161,0.2976 +- 0.0047,0.2675 +- 0.0233
 Ours (MelCNN->BiGRU),2.19M,audio+video,0.3122 +- 0.0415,0.2735 +- 0.0236,0.2475 +- 0.0082
 "Ours (BiLSTM, scratch)",3.58M,audio+video,0.3014 +- 0.0689,0.2728 +- 0.0401,0.2019 +- 0.0500
