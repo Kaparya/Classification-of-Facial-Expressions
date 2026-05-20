@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import numpy as np
 import torch
 
-from config import (AUDIO_CKPT_DIR, IEMOCAP_CKPT_DIR, FACE_DETECTOR_PATH,
+from config import (BIMODAL_CKPT_DIR, BIMODAL_SESSION, FACE_DETECTOR_PATH,
                     SR, N_MELS, MAX_LEN, N_FRAMES, LABELS, DEVICE)
 
 IEMOCAP_SAMPLE = (
@@ -39,10 +39,12 @@ def section(title: str) -> None:
 
 def test_paths() -> None:
     section("1. Config paths")
+    bimodal_ckpt = BIMODAL_CKPT_DIR / f"ours_bilstm_bimodal_{BIMODAL_SESSION}.pt"
+    gate_ckpt    = BIMODAL_CKPT_DIR / f"gate_iemocap_{BIMODAL_SESSION}.pt"
     for name, p in [
-        ("audio ckpt dir",  AUDIO_CKPT_DIR),
-        ("iemocap ckpt dir", IEMOCAP_CKPT_DIR),
-        ("face detector",   FACE_DETECTOR_PATH),
+        ("bimodal head ckpt", bimodal_ckpt),
+        ("gate ckpt",         gate_ckpt),
+        ("face detector",     FACE_DETECTOR_PATH),
     ]:
         assert p.exists(), f"MISSING: {p}"
         print(f"  OK  {name}: {p.name}")
@@ -62,11 +64,11 @@ def test_model_load() -> None:
     section("3. Model loading")
     from models.mel_cnn import load_mel_gate
     gate = load_mel_gate()
-    print(f"  OK  MelCNN  params={sum(p.numel() for p in gate.parameters()):,}")
+    print(f"  OK  MelCNN          params={sum(p.numel() for p in gate.parameters()):,}")
 
-    from models.bilstm import load_bilstm
-    head = load_bilstm()
-    print(f"  OK  BiLSTM  params={sum(p.numel() for p in head.parameters()):,}")
+    from models.bimodal import load_bimodal
+    head = load_bimodal()
+    print(f"  OK  BiLSTMBimodal   params={sum(p.numel() for p in head.parameters()):,}")
 
 
 def test_synthetic_inference() -> None:

@@ -1,14 +1,12 @@
 import cv2
 import numpy as np
 
-# BGR colours for each emotion
+# BGR colours for each emotion (4-class IEMOCAP label space).
 _COLOURS: dict[str, tuple[int, int, int]] = {
-    'neutral':    (180, 180, 180),
-    'happy':      (80,  200,   0),
-    'sad':        (255, 120,  80),
-    'angry':      (60,   60, 255),
-    'excited':    (0,   180, 255),
-    'frustrated': (200, 100, 255),
+    'neutral': (180, 180, 180),
+    'happy':   (80,  200,   0),
+    'sad':     (255, 120,  80),
+    'angry':   (60,   60, 255),
 }
 _DEFAULT_COLOUR = (200, 200, 200)
 

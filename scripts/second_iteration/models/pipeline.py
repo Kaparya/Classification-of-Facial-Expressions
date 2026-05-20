@@ -8,9 +8,9 @@ from mediapipe.tasks.python import vision as mp_vision
 import torchvision.transforms as T
 from emotiefflib.facial_analysis import EmotiEffLibRecognizer
 
-from config import DEVICE, FACE_DETECTOR_PATH, IMG_SIZE, N_FRAMES, LABELS
+from config import DEVICE, FACE_DETECTOR_PATH, IMG_SIZE, N_FRAMES, LABELS, SOFT_LAM
 from models.mel_cnn import load_mel_gate, audio_to_mel
-from models.bilstm import load_bilstm
+from models.bimodal import load_bimodal
 
 _IMAGENET_TF = T.Compose([
     T.ToTensor(),
@@ -19,10 +19,13 @@ _IMAGENET_TF = T.Compose([
 
 
 class EmotionPipeline:
-    """Cascade: MelCNN audio gate → (if non-neutral) EmotiEffNet+BiLSTM video branch."""
+    """Soft cascade matching iemocap_benchmark_4class.ipynb. Gate and head both
+    run on every utterance; gate's log_softmax is added to head logits as a
+    Bayesian prior (SOFT_LAM). Audio_mel is shared between gate and head -- no
+    re-extraction. Same fusion as the metrics reported in the benchmark."""
 
     def __init__(self):
-        print("Loading audio gate (MelCNN)...")
+        print("Loading audio gate (MelCNN, per-fold IEMOCAP gate)...")
         self.mel_gate = load_mel_gate()
 
         print("Loading video backbone (EmotiEffNet enet_b0_8_best_vgaf)...")
@@ -32,8 +35,8 @@ class EmotionPipeline:
         for p in self.emotieffnet.parameters():
             p.requires_grad_(False)
 
-        print("Loading BiLSTM head (IEMOCAP fine-tuned, 6 classes)...")
-        self.bilstm = load_bilstm()
+        print("Loading bimodal head (BiLSTMBimodal, 4 classes)...")
+        self.bimodal_head = load_bimodal()
 
         print("Loading face detector (MediaPipe BlazeFace)...")
         self.face_detector = mp_vision.FaceDetector.create_from_options(
@@ -71,18 +74,14 @@ class EmotionPipeline:
         frames : list of RGB uint8 ndarrays (any length)
         Returns: (emotion_label, confidence_float)
         """
-        # --- audio gate ---
         mel = audio_to_mel(audio).to(DEVICE)
-        gate_logits = self.mel_gate(mel)
-        is_neutral = gate_logits.argmax(1).item() == 0
-        gate_conf = F.softmax(gate_logits, dim=1)[0, 0].item()
+        gate_logits = self.mel_gate(mel)                       # (1, 2)
+        gate_logp = F.log_softmax(gate_logits, dim=1)
 
-        if is_neutral:
-            return 'neutral', gate_conf
-
-        # --- video branch ---
         if not frames:
-            return 'neutral', 0.5
+            # Camera unavailable: degrade gracefully to gate-only neutral check.
+            p_neu = F.softmax(gate_logits, dim=1)[0, 0].item()
+            return 'neutral', p_neu
 
         n = len(frames)
         if n >= N_FRAMES:
@@ -93,8 +92,14 @@ class EmotionPipeline:
 
         crops = [self._detect_face_crop(f) for f in sampled]
         batch = torch.stack([_IMAGENET_TF(c) for c in crops]).to(DEVICE)
-        eff_feats = self.emotieffnet(batch)       # (N_FRAMES, 1280)
-        logits = self.bilstm(eff_feats.unsqueeze(0))  # (1, N_CLS)
-        probs = F.softmax(logits, dim=1)[0]
+        eff_feats = self.emotieffnet(batch)                    # (N_FRAMES, 1280)
+        head_logits = self.bimodal_head(eff_feats.unsqueeze(0), mel)  # (1, N_CLS)
+
+        # Soft cascade: add gate's log-prior to head logits.
+        fused = head_logits.clone()
+        fused[:, 0]  = fused[:, 0]  + SOFT_LAM * gate_logp[:, 0]
+        fused[:, 1:] = fused[:, 1:] + SOFT_LAM * gate_logp[:, 1:2]
+
+        probs = F.softmax(fused, dim=1)[0]
         pred_idx = probs.argmax().item()
         return LABELS[pred_idx], probs[pred_idx].item()

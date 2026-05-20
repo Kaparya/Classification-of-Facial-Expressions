@@ -3,7 +3,8 @@ import torch.nn as nn
 import numpy as np
 import librosa
 
-from config import AUDIO_CKPT_DIR, SR, N_MELS, MAX_LEN, HOP, MEL_MEAN, MEL_STD, DEVICE
+from config import (BIMODAL_CKPT_DIR, BIMODAL_SESSION,
+                    SR, N_MELS, MAX_LEN, HOP, MEL_MEAN, MEL_STD, DEVICE)
 
 
 class MelCNN(nn.Module):
@@ -26,8 +27,13 @@ class MelCNN(nn.Module):
 
 
 def load_mel_gate() -> MelCNN:
+    """Load the per-LOSO-fold IEMOCAP-fine-tuned MelCNN gate. The global
+    RAVDESS+CREMA-D pretrained gate over-fires `neutral` on IEMOCAP
+    improvised speech; this fine-tuned copy is what
+    iemocap_benchmark_4class.ipynb uses for the cascade prior."""
     model = MelCNN(N_MELS, MAX_LEN).to(DEVICE)
-    state = torch.load(AUDIO_CKPT_DIR / "mel_cnn.pt", map_location=DEVICE, weights_only=True)
+    state = torch.load(BIMODAL_CKPT_DIR / f"gate_iemocap_{BIMODAL_SESSION}.pt",
+                       map_location=DEVICE, weights_only=True)
     model.load_state_dict(state)
     model.eval()
     return model

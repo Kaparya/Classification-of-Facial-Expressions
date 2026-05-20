@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Real-time multimodal emotion recognition — second iteration.
 
-Cascade pipeline
-  1. MelCNN audio gate  (audio_neutral_2/mel_cnn.pt)
+Cascade pipeline (bimodal head, per-fold IEMOCAP checkpoints)
+  1. MelCNN audio gate (per-fold gate_iemocap_{BIMODAL_SESSION}.pt from
+     iemocap_benchmark_4class)
      → neutral?  output 'neutral' immediately (fast path, no video needed)
      → non-neutral?  run video branch
-  2. EmotiEffNet backbone (enet_b0_8_best_vgaf)  +  BiLSTM head (iemocap_benchmark/bilstm_ft.pt)
-     → one of 6 IEMOCAP emotions: neutral / happy / sad / angry / excited / frustrated
+  2. EmotiEffNet backbone (enet_b0_8_best_vgaf) +
+     BiLSTMBimodal head (ours_bilstm_bimodal_{BIMODAL_SESSION}.pt):
+     video BiLSTM late-fused with the gate's conv-stack audio branch — the
+     (1,1,64,128) log-mel from stage 1 is reused, no audio re-extraction.
+     → one of 4 IEMOCAP emotions: neutral / happy / sad / angry.
 
 Usage:
     source venv/bin/activate && python scripts/second_iteration/demo.py
