@@ -1,8 +1,8 @@
 {
-  "git_hash": "90d2322f28fac47220904de21aba15239b99ee96",
+  "git_hash": "95bc39e585894e5ee6339c2b750de8478c5a2c42",
   "seed": 42,
   "device": "mps",
-  "timestamp": "2026-05-20 18:27:21",
+  "timestamp": "2026-05-20 21:33:06",
   "n_utterances": 5531,
   "classes": [
     "neutral",

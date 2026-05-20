@@ -1,8 +1,7 @@
 Model,Params,Modalities,WA,UA (UAR),Macro F1
 "Ours (BiLSTM bimodal, scratch)",5.72M,audio+video,0.5311 +- 0.0152,0.5555 +- 0.0315,0.5296 +- 0.0172
 Ours (BiLSTM bimodal),5.72M,audio+video,0.5246 +- 0.0193,0.5457 +- 0.0383,0.5178 +- 0.0276
+GIA-MIC,0.84M,audio+video,0.4545 +- 0.0274,0.4779 +- 0.0338,0.4446 +- 0.0314
 SCME+GF,0.97M,audio+video,0.4127 +- 0.0312,0.4626 +- 0.0294,0.3814 +- 0.0203
 MM-NodeFormer,1.49M,audio+video,0.4145 +- 0.0392,0.4475 +- 0.0173,0.3985 +- 0.0395
-"Ours (BiLSTM, scratch)",3.58M,audio+video,0.3875 +- 0.0380,0.3466 +- 0.0197,0.3037 +- 0.0257
-Ours (MelCNN->BiLSTM),3.58M,audio+video,0.3534 +- 0.0329,0.3364 +- 0.0389,0.3045 +- 0.0210
 ResNet18+GRU,0.81M,video,0.3192 +- 0.0480,0.3110 +- 0.0450,0.2782 +- 0.0498
