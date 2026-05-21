@@ -35,13 +35,8 @@ DEVICE = torch.device(
     ('mps' if torch.backends.mps.is_available() else 'cpu')
 )
 
-# Cascade fusion (matches iemocap_benchmark_4class.ipynb SOFT_LAM):
-# final_logits[0]   = head_logits[0]   + SOFT_LAM * log p_gate(neutral)
-# final_logits[k>0] = head_logits[k]   + SOFT_LAM * log p_gate(non-neutral)
-# lam=1.0 -> Bayesian product of head and gate; same value as the benchmark.
-SOFT_LAM = 1.0
-
 # VAD / streaming
 VAD_CHUNK       = 512   # samples per Silero VAD call
 VAD_THRESHOLD   = 0.5
 SILENCE_PATIENCE = 12   # silent chunks before ending an utterance
+

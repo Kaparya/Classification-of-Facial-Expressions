@@ -8,7 +8,7 @@ from mediapipe.tasks.python import vision as mp_vision
 import torchvision.transforms as T
 from emotiefflib.facial_analysis import EmotiEffLibRecognizer
 
-from config import DEVICE, FACE_DETECTOR_PATH, IMG_SIZE, N_FRAMES, LABELS, SOFT_LAM
+from config import DEVICE, FACE_DETECTOR_PATH, IMG_SIZE, N_FRAMES, LABELS
 from models.mel_cnn import load_mel_gate, audio_to_mel
 from models.bimodal import load_bimodal
 
@@ -19,10 +19,18 @@ _IMAGENET_TF = T.Compose([
 
 
 class EmotionPipeline:
-    """Soft cascade matching iemocap_benchmark_4class.ipynb. Gate and head both
-    run on every utterance; gate's log_softmax is added to head logits as a
-    Bayesian prior (SOFT_LAM). Audio_mel is shared between gate and head -- no
-    re-extraction. Same fusion as the metrics reported in the benchmark."""
+    """Hard cascade matching iemocap_benchmark_4class.ipynb (cascade_mode='hard').
+
+    Stage 1 — per-fold IEMOCAP MelCNN gate on the (1,1,64,128) log-mel.
+      gate.argmax == 0 (neutral)  -> return 'neutral' immediately;
+                                     face detection, EmotiEffNet, and the
+                                     bimodal head are skipped entirely.
+      gate.argmax == 1 (non-neu)  -> run stage 2.
+
+    Stage 2 — bimodal head on (video_eff, audio_mel). The same log-mel from
+    stage 1 is reused, so audio is never re-extracted. The head's argmax
+    over 4 classes is the final prediction (no log-prior fusion -- the gate
+    only routes; it does NOT bias the head's logits)."""
 
     def __init__(self):
         print("Loading audio gate (MelCNN, per-fold IEMOCAP gate)...")
@@ -35,7 +43,7 @@ class EmotionPipeline:
         for p in self.emotieffnet.parameters():
             p.requires_grad_(False)
 
-        print("Loading bimodal head (BiLSTMBimodal, 4 classes)...")
+        print("Loading bimodal head (BiLSTMBimodal, 4 classes, hard skip)...")
         self.bimodal_head = load_bimodal()
 
         print("Loading face detector (MediaPipe BlazeFace)...")
@@ -76,12 +84,15 @@ class EmotionPipeline:
         """
         mel = audio_to_mel(audio).to(DEVICE)
         gate_logits = self.mel_gate(mel)                       # (1, 2)
-        gate_logp = F.log_softmax(gate_logits, dim=1)
+        gate_probs  = F.softmax(gate_logits, dim=1)[0]
 
+        # Hard cascade: gate says neutral -> short-circuit, skip video pipeline.
+        if gate_logits.argmax(dim=1).item() == 0:
+            return 'neutral', gate_probs[0].item()
+
+        # Gate said non-neutral. Fall back to gate-only neutral if camera dropped.
         if not frames:
-            # Camera unavailable: degrade gracefully to gate-only neutral check.
-            p_neu = F.softmax(gate_logits, dim=1)[0, 0].item()
-            return 'neutral', p_neu
+            return 'neutral', gate_probs[0].item()
 
         n = len(frames)
         if n >= N_FRAMES:
@@ -95,11 +106,6 @@ class EmotionPipeline:
         eff_feats = self.emotieffnet(batch)                    # (N_FRAMES, 1280)
         head_logits = self.bimodal_head(eff_feats.unsqueeze(0), mel)  # (1, N_CLS)
 
-        # Soft cascade: add gate's log-prior to head logits.
-        fused = head_logits.clone()
-        fused[:, 0]  = fused[:, 0]  + SOFT_LAM * gate_logp[:, 0]
-        fused[:, 1:] = fused[:, 1:] + SOFT_LAM * gate_logp[:, 1:2]
-
-        probs = F.softmax(fused, dim=1)[0]
+        probs = F.softmax(head_logits, dim=1)[0]
         pred_idx = probs.argmax().item()
         return LABELS[pred_idx], probs[pred_idx].item()
