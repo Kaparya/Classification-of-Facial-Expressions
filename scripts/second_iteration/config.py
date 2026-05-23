@@ -7,10 +7,12 @@ AUDIO_CKPT_DIR  = ROOT / "trained_models" / "audio_neutral_3_augmentation"
 BIMODAL_CKPT_DIR = ROOT / "trained_models" / "iemocap_benchmark_4class" / "checkpoints"
 FACE_DETECTOR_PATH = ROOT / "raw_models" / "blaze_face_short_range.tflite"
 
-# Per-fold checkpoint selection: Session5 is the last LOSO fold (conventional
-# default in the benchmark's summary plots). Swap to a different session if a
-# specific fold's UA peaks higher on improvised speech.
-BIMODAL_SESSION = "Session5"
+# Per-fold checkpoint selection. Picked as the highest test-UA LOSO fold of
+# `ours_bilstm_bimodal_hard_skip_scratch` in
+# results/ours_bilstm_bimodal_hard_skip_scratch/fold_*.json:
+#   Session1=0.5419  Session2=0.4704  Session3=0.5366
+#   Session4=0.5243  Session5=0.5385  -> Session1 wins.
+BIMODAL_SESSION = "Session1"
 
 # Audio (matches audio_neutral_3_augmentation/meta.json)
 SR      = 16_000

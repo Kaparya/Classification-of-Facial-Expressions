@@ -3,10 +3,12 @@
 Late-fusion of video (BiLSTM over EmotiEffNet features) and audio
 (MelCNN gate's conv stack + 256-d projection, binary head dropped).
 Trained per-LOSO-fold on IEMOCAP by `notebooks/iemocap_benchmark_4class.ipynb`
-under the slug `ours_bilstm_bimodal_hard_skip` -- the final shipped variant
-(pretrained-init, hard cascade on validation + inference). Audio input is the
-SAME (1,1,64,128) log-mel tensor consumed by the cascade gate -- the head
-reuses it without any re-extraction.
+under the slug `ours_bilstm_bimodal_hard_skip_scratch` -- the final shipped
+variant: random init, hard cascade on validation + inference. The otherwise-
+identical pretrained-init variant underperformed by ≈1 p.p. UA on IEMOCAP
+improvised speech and is kept in the zoo only as the ablation control. Audio
+input is the SAME (1,1,64,128) log-mel tensor consumed by the cascade gate --
+the head reuses it without any re-extraction.
 """
 
 import torch
@@ -53,7 +55,7 @@ def load_bimodal() -> BiLSTMBimodal:
     in the checkpoint is prefixed with `head.` -- we strip that prefix here."""
     model = BiLSTMBimodal(feat_dim_v=FEAT_EFF, hidden=128, n_classes=N_CLS,
                           n_mels=N_MELS, mel_len=MAX_LEN).to(DEVICE)
-    ckpt_path = BIMODAL_CKPT_DIR / f"ours_bilstm_bimodal_hard_skip_{BIMODAL_SESSION}.pt"
+    ckpt_path = BIMODAL_CKPT_DIR / f"ours_bilstm_bimodal_hard_skip_scratch_{BIMODAL_SESSION}.pt"
     raw = torch.load(ckpt_path, map_location=DEVICE, weights_only=True)
     stripped = {k[len("head."):]: v for k, v in raw.items() if k.startswith("head.")}
     missing, unexpected = model.load_state_dict(stripped, strict=False)

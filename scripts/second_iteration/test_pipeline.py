@@ -39,7 +39,7 @@ def section(title: str) -> None:
 
 def test_paths() -> None:
     section("1. Config paths")
-    bimodal_ckpt = BIMODAL_CKPT_DIR / f"ours_bilstm_bimodal_hard_skip_{BIMODAL_SESSION}.pt"
+    bimodal_ckpt = BIMODAL_CKPT_DIR / f"ours_bilstm_bimodal_hard_skip_scratch_{BIMODAL_SESSION}.pt"
     gate_ckpt    = BIMODAL_CKPT_DIR / f"gate_iemocap_{BIMODAL_SESSION}.pt"
     for name, p in [
         ("bimodal head ckpt", bimodal_ckpt),

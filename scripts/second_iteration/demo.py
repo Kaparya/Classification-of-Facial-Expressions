@@ -8,7 +8,8 @@ cascade_mode='hard'; per-fold LOSO IEMOCAP checkpoints).
                      EmotiEffNet, and the bimodal head are SKIPPED.
      → non-neutral?  run stage 2.
   2. EmotiEffNet backbone (enet_b0_8_best_vgaf) + BiLSTMBimodal head
-     (ours_bilstm_bimodal_hard_skip_{BIMODAL_SESSION}.pt):
+     (ours_bilstm_bimodal_hard_skip_scratch_{BIMODAL_SESSION}.pt -- the final
+     shipped scratch + hard-skip variant from the benchmark):
      video BiLSTM late-fused with the gate's conv-stack audio branch — the
      (1,1,64,128) log-mel from stage 1 is reused, no audio re-extraction.
      argmax over 4 IEMOCAP classes: neutral / happy / sad / angry.
