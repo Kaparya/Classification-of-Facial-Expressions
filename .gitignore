@@ -7,6 +7,8 @@ __pycache__/
 articles/
 datasets/
 images/real-time demo
+junk/
+scripts/
 
 CLAUDE.md
 PP_final.txt
