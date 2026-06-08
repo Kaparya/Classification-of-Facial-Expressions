@@ -31,7 +31,7 @@ a two-stage cascade that only activates the heavy visual branch when it is neede
    so no self-supervised audio encoder (Wav2Vec 2.0 / HuBERT) is ever loaded at
    inference.
 
-This brings the end-to-end model down to **≈37.7 MB** — roughly **10× smaller** and
+This brings the end-to-end model down to **≈37.3 MB** — roughly **10× smaller** and
 **~3× faster** than the closest multimodal competitors (which carry a Wav2Vec 2.0
 encoder, ≈379–382 MB, ≈610 ms/utterance) — while reaching a **UAR of 0.5094** on
 four-class IEMOCAP under a strict speaker-independent LOSO protocol. A streaming
@@ -46,8 +46,8 @@ end-to-end per utterance from raw `wav`+`avi`.
 
 | Model | Modalities | UAR ↑ | Macro-F1 ↑ | WA ↑ | Size (MB) ↓ | Time (ms) ↓ |
 |---|---|---|---|---|---|---|
-| **Ours (BiLSTM bimodal, hard skip)**         | audio+video | **0.5094 ± 0.0232** | **0.4940 ± 0.0257** | **0.5113 ± 0.0255** | **≈37.7** | **≈216** |
-| Ours (BiLSTM bimodal, hard skip, *scratch*)  | audio+video | 0.5048 ± 0.0211 | 0.4921 ± 0.0269 | 0.5086 ± 0.0253 | ≈37.7 | ≈215 |
+| **Ours (BiLSTM bimodal, hard skip)**         | audio+video | **0.5094 ± 0.0232** | **0.4940 ± 0.0257** | **0.5113 ± 0.0255** | **≈37.3** | **≈216** |
+| Ours (BiLSTM bimodal, hard skip, *scratch*)  | audio+video | 0.5048 ± 0.0211 | 0.4921 ± 0.0269 | 0.5086 ± 0.0253 | ≈37.3 | ≈215 |
 | GIA-MIC          | audio+video | 0.4910 ± 0.0292 | 0.4658 ± 0.0180 | 0.4739 ± 0.0145 | ≈378.7 | ≈610 |
 | SCME+GF          | audio+video | 0.4626 ± 0.0294 | 0.3814 ± 0.0203 | 0.4127 ± 0.0312 | ≈379.1 | ≈612 |
 | MM-NodeFormer    | audio+video | 0.4475 ± 0.0173 | 0.3985 ± 0.0395 | 0.4145 ± 0.0392 | ≈381.5 | ≈600 |
