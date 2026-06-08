@@ -205,7 +205,7 @@ head's argmax is the final label. It loads the shipped *scratch* fold by default
 configurable in `real_time_demo/config.py`).
 
 <p align="center">
-  <img src="images/bimodal%20head.png" alt="Bimodal head" width="640"/>
+  <img src="images/bimodal_head.png" alt="Bimodal head" width="640"/>
 </p>
 
 ## Pretrained models
