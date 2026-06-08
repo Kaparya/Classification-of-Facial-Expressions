@@ -9,7 +9,7 @@ by **Damir R. Kandelov** and **Lyudmila V. Savchenko** (HSE University, Nizhny N
 > multimodal cascade described in the paper.
 
 <p align="center">
-  <img src="images/Final%20architecture.png" alt="Audio-gated cascade architecture" width="640"/>
+  <img src="images/final_architecture.png" alt="Audio-gated cascade architecture" width="640"/>
 </p>
 
 ## Overview
