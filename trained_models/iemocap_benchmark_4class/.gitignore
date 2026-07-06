@@ -1,1 +1,5 @@
-checkpoints/
+checkpoints/ours_bilstm_bimodal_scratch_S*.pt
+checkpoints/ours_bilstm_bimodal_S*.pt
+checkpoints/ours_bilstm_scratch_S*.pt
+checkpoints/ours_melcnn_bigru_S*.pt
+checkpoints/ours_melcnn_bilstm_S*.pt
